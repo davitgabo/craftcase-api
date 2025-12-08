@@ -18,18 +18,46 @@ class OrderedItemsRelationManager extends RelationManager
     {
         return $form
             ->schema([
+                Forms\Components\Select::make('phone_model_id')
+                    ->relationship('phoneModel', 'model')
+                    ->searchable()
+                    ->preload()
+                    ->required(),
+                Forms\Components\Select::make('design_id')
+                    ->relationship('design', 'title')
+                    ->searchable()
+                    ->preload()
+                    ->required(),
                 Forms\Components\TextInput::make('quantity')
                     ->required()
-                    ->maxLength(255),
+                    ->numeric()
+                    ->default(1),
+                Forms\Components\TextInput::make('price')
+                    ->required()
+                    ->numeric()
+                    ->prefix('$'),
             ]);
     }
 
     public function table(Table $table): Table
     {
         return $table
-            ->recordTitleAttribute('quantity')
+            ->recordTitleAttribute('id')
             ->columns([
-                Tables\Columns\TextColumn::make('quantity'),
+                Tables\Columns\TextColumn::make('phoneModel.model')
+                    ->label('Phone Model')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('design.title')
+                    ->label('Design')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('quantity')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('price')
+                    ->money()
+                    ->sortable(),
             ])
             ->filters([
                 //
