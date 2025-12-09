@@ -34,6 +34,10 @@ class OrderResource extends Resource
                                 Forms\Components\Select::make('user_id')
                                     ->relationship('user', 'name')
                                     ->searchable(),
+                                Forms\Components\DateTimePicker::make('order_date')
+                                    ->required()
+                                    ->default(now())
+                                    ->seconds(false),
                                 Forms\Components\Select::make('status')
                                     ->options([
                                         'pending' => 'Pending',
@@ -50,7 +54,7 @@ class OrderResource extends Resource
                                 Forms\Components\TextInput::make('total')
                                     ->required()
                                     ->numeric()
-                                    ->prefix('$'),
+                                    ->prefix('₾'),
                             ])->columns(2),
                     ]),
 
@@ -100,16 +104,35 @@ class OrderResource extends Resource
                         default => 'gray',
                     }),
                 Tables\Columns\TextColumn::make('total')
-                    ->money()
+                    ->money('gel')
                     ->sortable()
-                    ->summarize(Tables\Columns\Summarizers\Sum::make()->money()),
-                Tables\Columns\TextColumn::make('created_at')
+                    ->summarize(Tables\Columns\Summarizers\Sum::make()->money('gel')),
+
+                Tables\Columns\TextColumn::make('order_date')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\Filter::make('order_date')
+                    ->form([
+                        Forms\Components\Grid::make(2)
+                            ->schema([
+                                Forms\Components\DatePicker::make('date_from'),
+                                Forms\Components\DatePicker::make('date_until'),
+                            ]),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['date_from'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('order_date', '>=', $date),
+                            )
+                            ->when(
+                                $data['date_until'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('order_date', '<=', $date),
+                            );
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

@@ -26,8 +26,7 @@ class OrderedItemsRelationManager extends RelationManager
                 Forms\Components\Select::make('design_id')
                     ->relationship('design', 'title')
                     ->searchable()
-                    ->preload()
-                    ->required(),
+                    ->preload(),
                 Forms\Components\TextInput::make('quantity')
                     ->required()
                     ->numeric()
@@ -35,7 +34,7 @@ class OrderedItemsRelationManager extends RelationManager
                 Forms\Components\TextInput::make('price')
                     ->required()
                     ->numeric()
-                    ->prefix('$'),
+                    ->prefix('₾'),
             ]);
     }
 
