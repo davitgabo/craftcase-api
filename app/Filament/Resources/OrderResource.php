@@ -107,7 +107,8 @@ class OrderResource extends Resource
                     ->money('gel')
                     ->sortable()
                     ->summarize(Tables\Columns\Summarizers\Sum::make()->money('gel')),
-
+                Tables\Columns\ToggleColumn::make('counted')
+                    ->label('Counted'),
                 Tables\Columns\TextColumn::make('order_date')
                     ->dateTime()
                     ->sortable()
@@ -133,6 +134,11 @@ class OrderResource extends Resource
                                 fn (Builder $query, $date): Builder => $query->whereDate('order_date', '<=', $date),
                             );
                     }),
+                Tables\Filters\TernaryFilter::make('counted')
+                    ->label('Counted')
+                    ->placeholder('All orders')
+                    ->trueLabel('Counted only')
+                    ->falseLabel('Not counted only'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
