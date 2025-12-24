@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::table('orders', function (Blueprint $table) {
             $table->boolean('counted')->default(false);
+            $table->float('courier_fee')->default(0);
         });
     }
 
@@ -23,6 +24,7 @@ return new class extends Migration
     {
         Schema::table('orders', function (Blueprint $table) {
             $table->dropColumn('counted');
+            $table->dropColumn('courier_fee');
         });
     }
 };

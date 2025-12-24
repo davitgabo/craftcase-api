@@ -55,6 +55,12 @@ class OrderResource extends Resource
                                     ->required()
                                     ->numeric()
                                     ->prefix('₾'),
+                                Forms\Components\TextInput::make('courier_fee')
+                                    ->numeric()
+                                    ->inputMode('decimal')
+                                    ->step('0.01')
+                                    ->prefix('₾')
+                                    ->default(0),
                             ])->columns(2),
                     ]),
 
@@ -104,6 +110,10 @@ class OrderResource extends Resource
                         default => 'gray',
                     }),
                 Tables\Columns\TextColumn::make('total')
+                    ->money('gel')
+                    ->sortable()
+                    ->summarize(Tables\Columns\Summarizers\Sum::make()->money('gel')),
+                Tables\Columns\TextColumn::make('courier_fee')
                     ->money('gel')
                     ->sortable()
                     ->summarize(Tables\Columns\Summarizers\Sum::make()->money('gel')),
