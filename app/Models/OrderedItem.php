@@ -21,4 +21,15 @@ class OrderedItem extends Model
     {
         return $this->belongsTo(PhoneModel::class);
     }
+    protected static function booted(): void
+    {
+        static::created(function (OrderedItem $orderedItem) {
+            $orderedItem->phoneModel()->decrement('amount', $orderedItem->quantity);
+        });
+
+        static::deleted(function (OrderedItem $orderedItem) {
+            $orderedItem->phoneModel()->increment('amount', $orderedItem->quantity);
+        });
+    }
+
 }

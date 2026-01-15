@@ -3,8 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Design extends Model
 {
-
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(Category::class,'design_categories');
+    }
 }
