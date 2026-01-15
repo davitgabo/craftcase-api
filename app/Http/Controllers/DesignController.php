@@ -11,6 +11,7 @@ class DesignController extends Controller
     {
         $request->validate([
             'category_id' => 'nullable|integer|exists:categories,id',
+            'per_page' => 'nullable|integer|min:1|max:100',
         ]);
 
         $query = Design::with('categories');
@@ -21,7 +22,7 @@ class DesignController extends Controller
             });
         }
 
-        $designs = $query->get();
+        $designs = $query->paginate($request->input('per_page', 15));
 
         return response()->json($designs);
     }
