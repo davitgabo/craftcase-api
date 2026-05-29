@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\DesignResource;
 use App\Models\Design;
 use Illuminate\Http\Request;
 
@@ -24,6 +25,6 @@ class DesignController extends Controller
 
         $designs = $query->paginate($request->input('per_page', 15));
 
-        return response()->json($designs);
+        return DesignResource::collection($designs);
     }
 }
