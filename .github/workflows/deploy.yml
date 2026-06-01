@@ -29,18 +29,18 @@ jobs:
             echo "→ Installing PHP dependencies..."
             composer install --no-dev --optimize-autoloader --no-interaction
 
-            echo "→ Caching config & routes..."
-            php artisan config:cache
-            php artisan route:cache
-            php artisan view:cache
+            echo "→ Clearing cache"
+            php artisan optimize:clear
+            php artisan filament:optimize-clear
+
+            echo "→ Rebuilding cache"
+            php artisan optimize
+            php artisan filament:optimize
 
             echo "→ Running migrations..."
             php artisan migrate --force
 
             echo "→ Restarting queue workers..."
             php artisan queue:restart
-
-            echo "→ Clearing stale cache..."
-            php artisan cache:clear
 
             echo "✅ Deployment complete."
