@@ -1,0 +1,46 @@
+name: Deploy to DigitalOcean
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy via SSH
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to Droplet
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USER }}
+          key: ${{ secrets.DO_SSH_KEY }}
+          port: 22
+          script: |
+            set -e
+
+            cd /var/www/ntt/admin-ecommerce/
+
+            echo "→ Pulling latest code..."
+            git pull origin main
+
+            echo "→ Installing PHP dependencies..."
+            composer install --no-dev --optimize-autoloader --no-interaction
+
+            echo "→ Caching config & routes..."
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+
+            echo "→ Running migrations..."
+            php artisan migrate --force
+
+            echo "→ Restarting queue workers..."
+            php artisan queue:restart
+
+            echo "→ Clearing stale cache..."
+            php artisan cache:clear
+
+            echo "✅ Deployment complete."
