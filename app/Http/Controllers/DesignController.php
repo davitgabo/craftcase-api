@@ -27,4 +27,6 @@ class DesignController extends Controller
 
         return DesignResource::collection($designs);
     }
+
+
 }
