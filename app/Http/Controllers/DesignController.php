@@ -11,15 +11,16 @@ class DesignController extends Controller
     public function index(Request $request)
     {
         $request->validate([
-            'category_id' => 'nullable|integer|exists:categories,id',
+            'category_ids' => 'nullable|string',
             'per_page' => 'nullable|integer|min:1|max:100',
         ]);
 
         $query = Design::with('categories');
 
-        if ($request->has('category_id')) {
-            $query->whereHas('categories', function ($q) use ($request) {
-                $q->where('categories.id', $request->category_id);
+        if ($request->filled('category_ids')) {
+            $ids = explode(',', $request->category_ids);
+            $query->whereHas('categories', function ($q) use ($ids) {
+                $q->whereIn('categories.id', $ids);
             });
         }
 
@@ -27,6 +28,4 @@ class DesignController extends Controller
 
         return DesignResource::collection($designs);
     }
-
-
 }
